@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brody.io — Trade or Die</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0f1a;--panel:rgba(255,255,255,.06);--panel2:rgba(255,255,255,.11);
+  --border:rgba(255,255,255,.09);--accent:#e94560;--gold:#ffd700;
+  --green:#00e676;--red:#ff1744;--blue:#00b0ff;--purple:#d500f9;
+  --white:#f0f4ff;--dim:#7788aa;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--white);overflow-x:hidden;}
+
+/* ═══ CITY SKYLINE ═══ */
+#skyline{position:fixed;bottom:0;left:0;right:0;height:200px;pointer-events:none;z-index:0;background:linear-gradient(to top,#050510 0%,transparent 100%);}
+.bld{position:absolute;bottom:0;background:linear-gradient(to top,#0a1535,#162860);border-top:2px solid rgba(0,176,255,.5);overflow:hidden;transition:height .7s cubic-bezier(.34,1.56,.64,1),width .5s;}
+.bld::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);box-shadow:0 0 14px var(--blue);opacity:.8;}
+.bw{display:inline-block;width:5px;height:5px;margin:2px;border-radius:1px;}
+.bw.on{background:rgba(255,215,0,.8);} .bw.off{background:rgba(0,0,30,.6);}
+
+/* ═══ HEADER ═══ */
+#hdr{position:relative;z-index:50;background:rgba(8,8,22,.97);backdrop-filter:blur(12px);border-bottom:2px solid var(--accent);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 0 32px rgba(233,69,96,.25);}
+#logo{font-family:'Lilita One',cursive;font-size:2rem;color:var(--accent);text-shadow:0 0 20px rgba(233,69,96,.6);letter-spacing:2px;user-select:none;}
+#logo span{color:var(--gold);}
+.hs{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:5px 12px;text-align:center;min-width:80px;}
+.hs .lb{font-size:.56rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;}
+.hs .vl{font-size:1.05rem;font-weight:900;color:var(--gold);}
+.hs .vl.g{color:var(--green);}.hs .vl.r{color:var(--red);}
+#hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.hbtn{padding:5px 13px;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.76rem;border:1px solid;transition:all .15s;}
+#spd-btn{background:var(--panel2);border-color:rgba(255,255,255,.15);color:var(--white);}
+#spd-btn:hover{filter:brightness(1.4);}
+#save-btn{background:rgba(0,230,118,.08);border-color:var(--green);color:var(--green);}
+#save-btn:hover{background:rgba(0,230,118,.2);}
+#day-badge{background:var(--accent);border:none;color:var(--white);border-radius:8px;padding:5px 13px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;}
+
+/* ═══ TABS ═══ */
+#tabs{position:relative;z-index:50;display:flex;gap:4px;padding:10px 18px 0;background:rgba(8,8,22,.85);}
+.tab{padding:8px 20px;border-radius:10px 10px 0 0;cursor:pointer;font-weight:800;font-size:.82rem;background:var(--panel);color:var(--dim);border:1px solid var(--border);border-bottom:none;transition:all .15s;user-select:none;}
+.tab.active{background:rgba(233,69,96,.15);color:var(--accent);border-color:var(--accent);}
+.tab:hover:not(.active){color:var(--white);background:var(--panel2);}
+
+/* ═══ MAIN CONTENT ═══ */
+#main{position:relative;z-index:50;background:rgba(8,8,22,.92);backdrop-filter:blur(6px);border-top:1px solid rgba(233,69,96,.3);min-height:calc(100vh - 130px);}
+.tp{display:none;padding:18px;}
+.tp.active{display:block;}
+
+/* ═══ STOCK CARDS ═══ */
+#sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:11px;}
+.sc{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:13px;cursor:pointer;transition:transform .18s,border-color .18s,background .18s;position:relative;overflow:hidden;}
+.sc:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.22);box-shadow:0 6px 24px rgba(0,0,0,.45);}
+.sc.sel{border-color:var(--accent);background:rgba(233,69,96,.1);}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+.sc.up::before{background:var(--green)}.sc.dn::before{background:var(--red);}
+.sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
+.sc-tkr{font-family:'Lilita One',cursive;font-size:1.1rem;color:var(--gold);}
+.sc-tag{font-size:.55rem;color:var(--dim);background:rgba(255,255,255,.06);padding:2px 7px;border-radius:20px;margin-top:2px;}
+.sc-nm{font-size:.65rem;color:var(--dim);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sc-pr{font-size:1.3rem;font-weight:900;}
+.sc-ch{font-size:.75rem;font-weight:800;}
+.sc-ch.up{color:var(--green);}.sc-ch.dn{color:var(--red);}
+.sc-sp{margin-top:7px;height:28px;}
+.sc-sp canvas{width:100%;height:28px;display:block;}
+
+/* ═══ TRADE PANEL ═══ */
+#tpanel{background:var(--panel);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:18px;margin-top:14px;display:none;}
+#tpanel.show{display:block;}
+#tp-title{font-family:'Lilita One',cursive;font-size:1.25rem;color:var(--accent);margin-bottom:14px;}
+.tp-row{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px;}
+.tp-left{min-width:140px;}
+.big-pr{font-size:2rem;font-weight:900;}
+.pr-ch{font-size:.9rem;font-weight:800;margin-top:3px;}
+.qc{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.35);border-radius:10px;padding:6px 10px;margin-bottom:8px;}
+.qc button{width:30px;height:30px;border:none;border-radius:8px;background:rgba(255,255,255,.1);color:var(--white);font-size:1.1rem;cursor:pointer;font-weight:900;transition:background .1s;}
+.qc button:hover{background:var(--accent);}
+#qdis{font-size:1.3rem;font-weight:900;min-width:44px;text-align:center;}
+.sh-row{display:flex;gap:5px;flex-wrap:wrap;}
+.sh{padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--dim);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.7rem;transition:all .1s;}
+.sh:hover{background:rgba(255,255,255,.14);color:var(--white);}
+#tp-info{font-size:.82rem;color:var(--dim);margin-bottom:10px;}
+#tp-info span{color:var(--gold);font-weight:900;}
+.tb-row{display:flex;gap:8px;}
+.tbtn{flex:1;padding:11px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;cursor:pointer;letter-spacing:.5px;transition:all .15s;}
+.tbtn.buy{background:var(--green);color:#001a00;}
+.tbtn.sell{background:var(--red);color:var(--white);}
+.tbtn.buy:hover{filter:brightness(1.15);transform:translateY(-2px);}
+.tbtn.sell:hover{filter:brightness(1.15);transform:translateY(-2px);}
+.tbtn:active{transform:scale(.97)!important;}
+
+/* ═══ PORTFOLIO ═══ */
+#port-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.ps{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
+.ps .lb{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;}
+.ps .vl{font-size:1.65rem;font-weight:900;margin-top:4px;}
+#hold-list{display:grid;gap:8px;}
+.hr{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.hr-t{font-family:'Lilita One',cursive;font-size:1rem;color:var(--gold);width:55px;}
+.hr-mid{flex:1;min-width:120px;}
+.hr-q{font-size:.7rem;color:var(--dim);}
+.hr-v{font-size:.92rem;font-weight:900;}
+.hr-pnl{font-weight:900;font-size:.88rem;text-align:right;}
+.hr-pnl.g{color:var(--green);}.hr-pnl.r{color:var(--red);}
+.sa-btn{padding:5px 11px;border:1px solid var(--red);background:rgba(255,23,68,.1);color:var(--red);border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.68rem;white-space:nowrap;transition:background .1s;}
+.sa-btn:hover{background:rgba(255,23,68,.25);}
+
+/* ═══ CITY ═══ */
+#city-hd{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
+#city-name{font-family:'Lilita One',cursive;font-size:1.45rem;color:var(--blue);text-shadow:0 0 18px rgba(0,176,255,.5);}
+#pass-badge{background:rgba(0,230,118,.08);border:1px solid var(--green);border-radius:10px;padding:4px 12px;font-size:.8rem;font-weight:800;color:var(--green);}
+#bld-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:11px;}
+.bcard{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:15px;position:relative;transition:transform .2s,border-color .2s;}
+.bcard:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.2);}
+.bcard-lv{position:absolute;top:10px;right:10px;background:rgba(0,230,118,.15);border:1px solid var(--green);border-radius:20px;padding:2px 9px;font-size:.66rem;font-weight:900;color:var(--green);}
+.bcard-ico{font-size:2.2rem;margin-bottom:6px;}
+.bcard-nm{font-family:'Lilita One',cursive;font-size:1rem;}
+.bcard-ds{font-size:.68rem;color:var(--dim);margin:4px 0 8px;line-height:1.45;}
+.bcard-bar{height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:7px;}
+.bcard-fill{height:100%;border-radius:2px;background:var(--blue);transition:width .4s;}
+.bcard-inc{font-size:.76rem;color:var(--green);font-weight:800;margin-bottom:9px;}
+.bcard-btn{width:100%;padding:9px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.8rem;cursor:pointer;transition:all .15s;}
+.bcard-btn.can{background:var(--gold);color:#150a00;}
+.bcard-btn.cant{background:rgba(255,255,255,.05);color:var(--dim);cursor:not-allowed;}
+.bcard-btn.maxd{background:rgba(0,230,118,.1);color:var(--green);cursor:default;border:1px solid var(--green);}
+.bcard-btn.can:hover{filter:brightness(1.15);transform:scale(1.02);}
+
+/* ═══ UPGRADES ═══ */
+#upg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:11px;}
+.ucard{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:15px;transition:transform .2s;}
+.ucard:hover{transform:translateY(-2px);}
+.ucard-ico{font-size:2rem;margin-bottom:6px;}
+.ucard-nm{font-family:'Lilita One',cursive;font-size:.98rem;color:var(--purple);}
+.ucard-ds{font-size:.68rem;color:var(--dim);margin:4px 0 8px;line-height:1.45;}
+.ucard-ef{font-size:.74rem;color:var(--blue);font-weight:800;margin-bottom:9px;}
+.ucard-btn{width:100%;padding:8px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.78rem;cursor:pointer;transition:all .15s;}
+.ucard-btn.can{background:var(--purple);color:var(--white);}
+.ucard-btn.cant{background:rgba(255,255,255,.05);color:var(--dim);cursor:not-allowed;}
+.ucard-btn.owned{background:rgba(0,230,118,.1);color:var(--green);cursor:default;border:1px solid var(--green);}
+.ucard-btn.can:hover{filter:brightness(1.2);transform:scale(1.02);}
+
+/* ═══ NEWS TOASTS ═══ */
+#news-area{position:fixed;bottom:18px;left:18px;z-index:300;display:flex;flex-direction:column;gap:7px;pointer-events:none;max-width:290px;}
+.nt{background:rgba(8,8,28,.96);border-left:4px solid var(--green);border-radius:10px;padding:8px 13px;font-size:.74rem;line-height:1.45;animation:ntIn .3s ease,ntOut .35s 4s ease forwards;}
+.nt.r{border-left-color:var(--red);}.nt.y{border-left-color:var(--gold);}
+@keyframes ntIn{from{transform:translateX(-16px);opacity:0}to{transform:none;opacity:1}}
+@keyframes ntOut{from{opacity:1}to{opacity:0}}
+
+/* ═══ COIN POP ═══ */
+.coin{position:fixed;z-index:400;pointer-events:none;font-weight:900;font-size:.95rem;color:var(--gold);text-shadow:0 0 8px rgba(255,215,0,.6);animation:coinUp 1.1s ease forwards;}
+@keyframes coinUp{0%{opacity:1;transform:translateY(0) scale(1)}60%{opacity:1}100%{opacity:0;transform:translateY(-65px) scale(.8)}}
+
+/* ═══ CRASH FX ═══ */
+#crash-fx{position:fixed;inset:0;background:rgba(255,20,60,.1);z-index:350;pointer-events:none;display:none;animation:crFx .55s infinite;}
+@keyframes crFx{0%,100%{opacity:1}50%{opacity:.15}}
+
+/* ═══ GENERIC POPUP ═══ */
+#gpop{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:600;display:none;align-items:center;justify-content:center;}
+#gpop.on{display:flex;}
+#gpop-box{background:#0c1530;border:2px solid var(--accent);border-radius:20px;padding:32px;max-width:400px;width:92%;text-align:center;box-shadow:0 0 60px rgba(233,69,96,.35);animation:pIn .38s cubic-bezier(.34,1.56,.64,1);}
+@keyframes pIn{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+#gpop-emo{font-size:3.5rem;margin-bottom:10px;}
+#gpop-title{font-family:'Lilita One',cursive;font-size:1.65rem;color:var(--accent);margin-bottom:8px;}
+#gpop-msg{font-size:.86rem;color:var(--dim);line-height:1.65;margin-bottom:22px;}
+#gpop-btn{background:var(--accent);color:var(--white);border:none;border-radius:12px;padding:11px 34px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.94rem;cursor:pointer;transition:all .15s;letter-spacing:.5px;}
+#gpop-btn:hover{filter:brightness(1.2);transform:scale(1.04);}
+
+/* ═══════════════════════════════
+   WELCOME SCREEN
+═══════════════════════════════ */
+#welcome{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 35%,#1c1050 0%,#080818 100%);}
+#wbox{text-align:center;padding:28px 24px;max-width:480px;width:100%;}
+#w-skyline{font-size:3.8rem;animation:wFloat 3.2s ease-in-out infinite;display:block;margin-bottom:10px;}
+@keyframes wFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+#w-logo{font-family:'Lilita One',cursive;font-size:3.8rem;color:var(--accent);letter-spacing:3px;text-shadow:0 0 50px rgba(233,69,96,.7);animation:logoGlow 2.5s ease-in-out infinite;}
+@keyframes logoGlow{0%,100%{text-shadow:0 0 30px rgba(233,69,96,.5)}50%{text-shadow:0 0 70px rgba(233,69,96,.95),0 0 120px rgba(233,69,96,.3)}}
+#w-logo span{color:var(--gold);}
+#w-tagline{font-size:1rem;color:var(--dim);letter-spacing:3px;margin:8px 0 32px;text-transform:uppercase;}
+#w-actions{display:flex;flex-direction:column;gap:10px;}
+.wbtn{padding:14px;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1.05rem;cursor:pointer;letter-spacing:.5px;transition:all .2s;border:2px solid transparent;}
+#w-new{background:var(--accent);color:var(--white);box-shadow:0 4px 22px rgba(233,69,96,.4);}
+#w-new:hover{transform:translateY(-2px);filter:brightness(1.12);box-shadow:0 8px 32px rgba(233,69,96,.5);}
+#w-cont{background:rgba(0,230,118,.08);border-color:var(--green);color:var(--green);display:none;}
+#w-cont:hover{background:rgba(0,230,118,.2);transform:translateY(-2px);}
+#w-save-info{font-size:.72rem;color:var(--dim);margin-top:10px;}
+#w-save-detail{font-size:.68rem;color:rgba(0,230,118,.55);margin-top:4px;min-height:16px;}
+
+/* ═══════════════════════════════
+   TUTORIAL  — full-screen card overlay
+   (no DOM-position tricks)
+═══════════════════════════════ */
+#tut-wrap{
+  position:fixed;inset:0;z-index:900;
+  background:rgba(0,0,0,.88);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding:0 0 40px 0;
+}
+#tut-wrap.on{display:flex;}
+
+/* animated image / graphic area at top of card */
+#tut-graphic{
+  font-size:4rem;margin-bottom:16px;
+  animation:tGfx .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes tGfx{from{transform:scale(.5);opacity:0}to{transform:none;opacity:1}}
+
+#tut-card{
+  background:linear-gradient(145deg,#0d1b40,#0a1228);
+  border:2px solid var(--accent);
+  border-radius:22px;
+  padding:28px 28px 24px;
+  max-width:420px;width:92%;
+  text-align:center;
+  box-shadow:0 0 60px rgba(233,69,96,.35),0 20px 60px rgba(0,0,0,.6);
+  animation:tCardIn .4s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+}
+@keyframes tCardIn{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
+
+/* progress bar at top */
+#tut-prog-bar{
+  position:absolute;top:0;left:0;right:0;height:4px;
+  background:rgba(255,255,255,.08);border-radius:22px 22px 0 0;overflow:hidden;
+}
+#tut-prog-fill{height:100%;background:var(--accent);transition:width .45s ease;border-radius:22px;}
+
+#tut-step-lbl{font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;}
+#tut-title{font-family:'Lilita One',cursive;font-size:1.55rem;color:var(--accent);margin-bottom:10px;}
+#tut-body{font-size:.88rem;color:var(--white);line-height:1.65;margin-bottom:20px;}
+
+/* dot indicators */
+#tut-dots{display:flex;gap:5px;justify-content:center;margin-bottom:20px;}
+.tut-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .25s;}
+.tut-dot.on{background:var(--accent);width:20px;border-radius:4px;}
+
+#tut-btns{display:flex;gap:8px;}
+#tut-next{
+  flex:1;padding:11px;border:none;border-radius:12px;
+  background:var(--accent);color:var(--white);
+  font-family:'Nunito',sans-serif;font-weight:900;font-size:.92rem;
+  cursor:pointer;letter-spacing:.5px;transition:all .15s;
+}
+#tut-next:hover{filter:brightness(1.18);}
+#tut-skip{
+  padding:11px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.15);
+  background:transparent;color:var(--dim);
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:.82rem;cursor:pointer;transition:all .15s;
+}
+#tut-skip:hover{color:var(--white);border-color:rgba(255,255,255,.3);}
+
+/* highlight ring for tutorial targets */
+.tut-highlight{
+  outline:3px solid var(--accent)!important;
+  outline-offset:3px!important;
+  border-radius:14px!important;
+  animation:hlPulse 1.2s ease-in-out infinite;
+}
+@keyframes hlPulse{0%,100%{outline-color:var(--accent)}50%{outline-color:rgba(233,69,96,.3)}}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.22)}
+
+/* save flash */
+@keyframes saveFlash{0%,100%{opacity:1}50%{opacity:.4}}
+.flashing{animation:saveFlash .45s ease;}
+</style>
+</head>
+<body>
+
+<!-- ═══ CITY SKYLINE ═══ -->
+<div id="skyline"></div>
+
+<!-- ═══ CRASH FX ═══ -->
+<div id="crash-fx"></div>
+
+<!-- ═══ NEWS AREA ═══ -->
+<div id="news-area"></div>
+
+<!-- ═══════════════════════════════════════
+     WELCOME SCREEN
+═══════════════════════════════════════ -->
+<div id="welcome">
+  <div id="wbox">
+    <span id="w-skyline">🏙️</span>
+    <div id="w-logo">BRODY<span>.IO</span></div>
+    <div id="w-tagline">Build Your Empire</div>
+    <div id="w-actions">
+      <button class="wbtn" id="w-new" onclick="startNew()">🚀 New Game</button>
+      <button class="wbtn" id="w-cont" onclick="loadGame()">▶ Continue</button>
+    </div>
+    <div id="w-save-info">Progress auto-saves every 30 seconds</div>
+    <div id="w-save-detail"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TUTORIAL OVERLAY
+═══════════════════════════════════════ -->
+<div id="tut-wrap">
+  <div id="tut-card">
+    <div id="tut-prog-bar"><div id="tut-prog-fill" style="width:0%"></div></div>
+    <div id="tut-graphic">🏙️</div>
+    <div id="tut-step-lbl">STEP 1 OF 7</div>
+    <div id="tut-title">Welcome!</div>
+    <div id="tut-dots"></div>
+    <div id="tut-body">Let's get started.</div>
+    <div id="tut-btns">
+      <button id="tut-next" onclick="tutAdvance()">Next →</button>
+      <button id="tut-skip" onclick="tutEnd()">Skip</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     GENERIC POPUP
+═══════════════════════════════════════ -->
+<div id="gpop">
+  <div id="gpop-box">
+    <div id="gpop-emo">🎉</div>
+    <div id="gpop-title">Title</div>
+    <div id="gpop-msg">Message</div>
+    <button id="gpop-btn" onclick="closeGpop()">OK!</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     GAME UI
+═══════════════════════════════════════ -->
+<div id="hdr">
+  <div id="logo">BRODY<span>.IO</span></div>
+  <div class="hs"><div class="lb">Cash</div><div class="vl" id="h-cash">$5,000</div></div>
+  <div class="hs"><div class="lb">Net Worth</div><div class="vl g" id="h-nw">$5,000</div></div>
+  <div class="hs"><div class="lb">Today P&L</div><div class="vl" id="h-pnl">$0.00</div></div>
+  <div class="hs"><div class="lb">Passive/min</div><div class="vl g" id="h-pass">$0</div></div>
+  <div id="hdr-right">
+    <div id="day-badge">DAY 1</div>
+    <button class="hbtn" id="spd-btn" onclick="toggleSpeed()">⚡ 1×</button>
+    <button class="hbtn" id="save-btn" onclick="manualSave()">💾 Save</button>
+  </div>
+</div>
+
+<div id="tabs">
+  <div class="tab active" id="tab-btn-market" onclick="showTab('market',this)">📈 Market</div>
+  <div class="tab" id="tab-btn-port"   onclick="showTab('port',this)">💼 Portfolio</div>
+  <div class="tab" id="tab-btn-city"   onclick="showTab('city',this)">🏙️ City</div>
+  <div class="tab" id="tab-btn-upg"    onclick="showTab('upg',this)">⚗️ Upgrades</div>
+</div>
+
+<div id="main">
+
+  <!-- MARKET TAB -->
+  <div class="tp active" id="tab-market">
+    <div id="sg"></div>
+    <div id="tpanel">
+      <div id="tp-title">Select a stock above ↑</div>
+      <div class="tp-row">
+        <div class="tp-left">
+          <div class="big-pr" id="tp-pr">—</div>
+          <div class="pr-ch" id="tp-ch"></div>
+        </div>
+        <div>
+          <div class="qc">
+            <button onclick="adjQ(-10)">−−</button>
+            <button onclick="adjQ(-1)">−</button>
+            <div id="qdis">1</div>
+            <button onclick="adjQ(1)">+</button>
+            <button onclick="adjQ(10)">++</button>
+          </div>
+          <div class="sh-row">
+            <div class="sh" onclick="setQ(1)">1</div>
+            <div class="sh" onclick="setQ(5)">5</div>
+            <div class="sh" onclick="setQ(10)">10</div>
+            <div class="sh" onclick="setQ(25)">25</div>
+            <div class="sh" onclick="setQP(.5)">½ Cash</div>
+            <div class="sh" onclick="setQP(1)">🔥 All In</div>
+          </div>
+        </div>
+      </div>
+      <div id="tp-info">Cost: <span id="tp-cost">$0</span> &nbsp;·&nbsp; You own: <span id="tp-own">0 shares</span></div>
+      <div class="tb-row">
+        <button class="tbtn buy" onclick="trade('buy')">BUY 🟢</button>
+        <button class="tbtn sell" onclick="trade('sell')">SELL 🔴</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO TAB -->
+  <div class="tp" id="tab-port">
+    <div id="port-stats">
+      <div class="ps"><div class="lb">Cash</div><div class="vl" id="pt-cash">—</div></div>
+      <div class="ps"><div class="lb">Holdings</div><div class="vl" id="pt-hold">—</div></div>
+      <div class="ps"><div class="lb">Net Worth</div><div class="vl g" id="pt-nw">—</div></div>
+      <div class="ps"><div class="lb">All-Time P&L</div><div class="vl" id="pt-pnl">—</div></div>
+    </div>
+    <div id="hold-list"></div>
+  </div>
+
+  <!-- CITY TAB -->
+  <div class="tp" id="tab-city">
+    <div id="city-hd">
+      <div id="city-name">🏙️ Your City</div>
+      <div id="pass-badge">+$0 / min</div>
+    </div>
+    <p style="color:var(--dim);font-size:.78rem;margin-bottom:14px">Buildings earn <strong style="color:var(--green)">passive cash every minute</strong> — even while you're not trading! Upgrade each one 3× for huge bonuses.</p>
+    <div id="bld-grid"></div>
+  </div>
+
+  <!-- UPGRADES TAB -->
+  <div class="tp" id="tab-upg">
+    <p style="color:var(--dim);font-size:.78rem;margin-bottom:14px">Spend cash on <strong style="color:var(--purple)">permanent upgrades</strong> that boost trading and income.</p>
+    <div id="upg-grid"></div>
+  </div>
+
+</div><!-- #main -->
+
+<script>
+/* ════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════ */
+const STOCKS=[
+  {t:'JAGN', n:'Jagan Brokerage',       p:100, v:.018, e:'🏦', k:'STOCK'},
+  {t:'ABEL', n:'Abel Group',             p:74,  v:.022, e:'💼', k:'STOCK'},
+  {t:'BROD', n:'BrodyCoin',              p:12,  v:.055, e:'🪙', k:'CRYPTO'},
+  {t:'AUVI', n:'AuviX',                  p:45,  v:.028, e:'💻', k:'STOCK'},
+  {t:'SUNY', n:'SunnyD',                 p:33,  v:.020, e:'🍊', k:'STOCK'},
+  {t:'JOHN', n:'John Pork Jerky',        p:22,  v:.024, e:'🥩', k:'STOCK'},
+  {t:'CARV', n:"Carver's Cars",          p:61,  v:.025, e:'🚗', k:'STOCK'},
+  {t:'3000', n:'Turbo Technologies',     p:88,  v:.030, e:'⚙️', k:'STOCK'},
+  {t:'MONT', n:'MontyCoin',              p:8,   v:.065, e:'🪙', k:'CRYPTO'},
+  {t:'HIMYU',n:'HimyuCoin',              p:5,   v:.070, e:'🪙', k:'CRYPTO'},
+  {t:'LIAM', n:'LiamX',                  p:19,  v:.060, e:'🪙', k:'CRYPTO'},
+  {t:'JAX',  n:'JaxCoin',                p:15,  v:.062, e:'🪙', k:'CRYPTO'},
+  {t:'DYLN', n:'DeylinCoin',             p:11,  v:.068, e:'🪙', k:'CRYPTO'},
+  {t:'MATT', n:'MattCoin',               p:9,   v:.072, e:'🪙', k:'CRYPTO'},
+  {t:'SAVD', n:'SaviorCoin',             p:6,   v:.080, e:'🪙', k:'CRYPTO'},
+  {t:'VINY', n:'Vinny Basketball',       p:55,  v:.021, e:'🏀', k:'STOCK'},
+  {t:'TIMM', n:'TimmyCoin',              p:7,   v:.075, e:'🪙', k:'CRYPTO'},
+];
+
+const BUILDINGS=[
+  {id:'kiosk',   e:'🏪', n:'Street Kiosk',   d:'Humble start. Every empire begins here.',      b:10,  c:400,    m:3},
+  {id:'diner',   e:'🍽️', n:'Brody Diner',     d:'Burgers, fries, and steady cash flow.',        b:28,  c:1200,   m:3},
+  {id:'carwash', e:'🚗', n:'Speed Wash',      d:'Cars in, money out. Simple.',                  b:50,  c:2800,   m:3},
+  {id:'gym',     e:'💪', n:'Gains Gym',       d:'Monthly memberships. Perpetual gains.',        b:80,  c:6000,   m:3},
+  {id:'mall',    e:'🛍️', n:'Brody Mall',      d:'Dozens of shops. One roof. All yours.',        b:160, c:14000,  m:3},
+  {id:'hotel',   e:'🏨', n:'Hotel Brody',     d:'Five stars. Five figures a minute.',           b:280, c:30000,  m:3},
+  {id:'casino',  e:'🎰', n:'Brody Casino',    d:'The house always wins. Especially yours.',     b:500, c:60000,  m:3},
+  {id:'tower',   e:'🏢', n:'Brody Tower',     d:'Crown jewel of your skyline.',                 b:900, c:120000, m:3},
+  {id:'stadium', e:'🏟️', n:'Vinny Arena',     d:'Home of champions. Pure revenue machine.',     b:1500,c:250000, m:3},
+];
+
+const UPGRADES=[
+  {id:'turbo',   e:'⚡', n:'Turbo Feed',       d:'Market prices update twice as fast.',           f:'+100% tick speed',    c:2000},
+  {id:'insider', e:'🕵️', n:'Insider Network',  d:'Stocks are 20% less volatile — easier trends.', f:'-20% volatility',     c:4000},
+  {id:'passive', e:'📦', n:'Logistics Empire', d:'All buildings earn 50% more per minute.',       f:'+50% passive income', c:8000},
+  {id:'shield',  e:'🛡️', n:'Crash Insurance',  d:'Market crashes barely scratch your crypto.',    f:'Crash protection',    c:10000},
+  {id:'dividend',e:'💸', n:'Dividend Engine',  d:'Earn 1% of your holdings value every minute.',  f:'+1%/min on holdings', c:18000},
+  {id:'maker',   e:'🏦', n:'Market Maker',     d:'Get 1% cash back on every buy order.',          f:'+1% buy rebate',      c:25000},
+  {id:'moon',    e:'🚀', n:'Moon Protocol',    d:'Once per day a random crypto 5×\'s.',           f:'Daily 5× event',      c:40000},
+  {id:'oracle',  e:'🔮', n:'Market Oracle',    d:'See trend direction hints on every stock.',     f:'Price direction hints',c:15000},
+];
+
+const NEWS_POOL=[
+  {col:'g', f:s=>`${s.t} smashes earnings — shares POPPING! 🔥`,       sent:3},
+  {col:'r', f:s=>`${s.t} CEO steps down amid controversy.`,             sent:-3},
+  {col:'g', f:s=>`Analysts upgrade ${s.t} to STRONG BUY.`,             sent:2},
+  {col:'r', f:s=>`${s.t} faces massive class-action lawsuit.`,          sent:-2},
+  {col:'y', f:s=>`${s.t} merger rumors swirling. Hold tight.`,         sent:1},
+  {col:'g', f:s=>`Whale buys 100M shares of ${s.t}. 👀`,               sent:4},
+  {col:'r', f:s=>`${s.t} exploit discovered. Panic selling.`,           sent:-4},
+  {col:'g', f:s=>`Government contract awarded to ${s.t}!`,             sent:3},
+  {col:'r', f:s=>`${s.t} misses revenue forecast by 40%. Ouch.`,        sent:-3},
+  {col:'y', f:s=>`${s.t} announces stock buyback program.`,            sent:0},
+  {col:'g', f:s=>`${s.t} posts record quarterly results. 📈`,          sent:2},
+  {col:'r', f:s=>`Insider selling detected at ${s.t}.`,                sent:-2},
+];
+
+/* ════════════════════════════════════════════
+   GAME STATE
+════════════════════════════════════════════ */
+const G={
+  cash:5000, startCash:5000, dayStartNW:5000,
+  stocks:[],
+  pos:{},           // {ticker: {qty, avg}}
+  buildings:{},     // {id: {level}}
+  upgrades:{},      // {id: true}
+  sel:null,         // selected ticker
+  qty:1,
+  day:1,
+  speed:1,
+  // upgrade flags
+  volMult:1, passBoost:1, crashShield:false,
+  dividends:false, tradeBonus:0,
+  moonActive:false, moonUsed:false, oracle:false,
+  totalTrades:0, bestTrade:0,
+};
+
+/* ════════════════════════════════════════════
+   COOKIE SAVE / LOAD
+════════════════════════════════════════════ */
+const SAVE_KEY='brodio_v4';
+
+function saveGame(){
+  const payload={
+    cash:G.cash, startCash:G.startCash, dayStartNW:G.dayStartNW,
+    pos:G.pos, buildings:G.buildings, upgrades:G.upgrades,
+    day:G.day, speed:G.speed, volMult:G.volMult, passBoost:G.passBoost,
+    crashShield:G.crashShield, dividends:G.dividends, tradeBonus:G.tradeBonus,
+    moonActive:G.moonActive, moonUsed:G.moonUsed, oracle:G.oracle,
+    totalTrades:G.totalTrades, bestTrade:G.bestTrade,
+    nw:getNW(), savedAt:new Date().toISOString(),
+  };
+  const exp=new Date(Date.now()+30*864e5).toUTCString();
+  document.cookie=`${SAVE_KEY}=${encodeURIComponent(JSON.stringify(payload))};expires=${exp};path=/;SameSite=Lax`;
+}
+
+function readSave(){
+  const match=document.cookie.split(';').find(c=>c.trim().startsWith(SAVE_KEY+'='));
+  if(!match)return null;
+  try{return JSON.parse(decodeURIComponent(match.trim().slice(SAVE_KEY.length+1)));}
+  catch{return null;}
+}
+
+function nukeSave(){
+  document.cookie=`${SAVE_KEY}=;expires=Thu,01 Jan 1970 00:00:00 UTC;path=/;`;
+}
+
+function manualSave(){
+  saveGame();
+  const btn=document.getElementById('save-btn');
+  const orig=btn.textContent;
+  btn.textContent='✅ Saved!';
+  btn.classList.add('flashing');
+  setTimeout(()=>{btn.textContent=orig;btn.classList.remove('flashing');},1500);
+  toast('💾 Game saved!','y');
+}
+
+/* ════════════════════════════════════════════
+   WELCOME SCREEN
+════════════════════════════════════════════ */
+function initWelcome(){
+  const sv=readSave();
+  if(sv){
+    document.getElementById('w-cont').style.display='block';
+    const ago=timeAgo(new Date(sv.savedAt));
+    document.getElementById('w-save-detail').textContent=
+      `Saved ${ago} · Day ${sv.day} · $${fmtN(sv.nw||0)} net worth`;
+  }
+}
+
+function timeAgo(d){
+  const s=Math.floor((Date.now()-d)/1000);
+  if(s<60)return'just now';
+  if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+
+function startNew(){
+  nukeSave();
+  resetState();
+  initStocks();
+  hideWelcome();
+  startTutorial();   // tutorial shown BEFORE engine starts
+}
+
+function loadGame(){
+  const sv=readSave();
+  if(!sv){startNew();return;}
+  Object.assign(G,{
+    cash:sv.cash, startCash:sv.startCash, dayStartNW:sv.dayStartNW,
+    pos:sv.pos||{}, buildings:sv.buildings||{}, upgrades:sv.upgrades||{},
+    day:sv.day||1, speed:sv.speed||1, volMult:sv.volMult||1,
+    passBoost:sv.passBoost||1, crashShield:sv.crashShield||false,
+    dividends:sv.dividends||false, tradeBonus:sv.tradeBonus||0,
+    moonActive:sv.moonActive||false, moonUsed:sv.moonUsed||false,
+    oracle:sv.oracle||false, totalTrades:sv.totalTrades||0, bestTrade:sv.bestTrade||0,
+  });
+  initStocks();
+  applyAllUpgrades();
+  hideWelcome();
+  bootGame();   // skip tutorial for loaded saves
+  toast('▶ Welcome back! Day '+G.day,'y');
+}
+
+function hideWelcome(){
+  document.getElementById('welcome').style.display='none';
+}
+
+function resetState(){
+  Object.assign(G,{
+    cash:5000, startCash:5000, dayStartNW:5000,
+    pos:{}, buildings:{}, upgrades:{},
+    day:1, speed:1, volMult:1, passBoost:1,
+    crashShield:false, dividends:false, tradeBonus:0,
+    moonActive:false, moonUsed:false, oracle:false,
+    totalTrades:0, bestTrade:0, sel:null, qty:1,
+  });
+}
+
+/* ════════════════════════════════════════════
+   STOCKS INIT
+════════════════════════════════════════════ */
+function initStocks(){
+  G.stocks=STOCKS.map(s=>({
+    ...s,
+    cur:s.p,
+    open:s.p,
+    prev:s.p,
+    sent:0,
+    hist:Array.from({length:40},()=>s.p*(1+(Math.random()-.5)*.08)),
+  }));
+}
+
+/* ════════════════════════════════════════════
+   ENGINE  (only runs after tutorial ends)
+════════════════════════════════════════════ */
+let _tick,_pass,_news,_day,_render,_autoSave;
+
+function bootGame(){
+  stopEngine();
+  const sp=G.speed;
+  const baseMs=G.upgrades['turbo']?400:800;
+  _tick    =setInterval(tickPrices,  baseMs/sp);
+  _pass    =setInterval(passiveTick, 60000/sp);
+  _news    =setInterval(fireNews,    9000/sp);
+  _day     =setInterval(advanceDay,  90000/sp);
+  _render  =setInterval(renderAll,   600);
+  _autoSave=setInterval(saveGame,    30000);
+  renderAll();
+  renderBuildings();
+  renderUpgrades();
+  rebuildSkyline();
+}
+
+function stopEngine(){
+  [_tick,_pass,_news,_day,_render,_autoSave].forEach(t=>clearInterval(t));
+}
+
+function tickPrices(){
+  G.stocks.forEach(s=>{
+    const d=(Math.random()-.496+s.sent*.008)*s.v*G.volMult;
+    s.prev=s.cur;
+    s.cur=Math.max(.01, s.cur+s.cur*d);
+    s.hist.push(s.cur);
+    if(s.hist.length>90)s.hist.shift();
+    s.sent*=.93;
+  });
+}
+
+function passiveTick(){
+  const inc=calcPassive();
+  if(inc>0){ G.cash+=inc; spawnCoin('+$'+Math.round(inc)+' 🏙️'); }
+  if(G.dividends){
+    let hv=0;
+    Object.entries(G.pos).forEach(([t,p])=>{
+      const s=G.stocks.find(x=>x.t===t);
+      if(s&&p.qty>0) hv+=s.cur*p.qty;
+    });
+    const div=hv*.01;
+    if(div>0){ G.cash+=div; spawnCoin('+$'+div.toFixed(0)+' 💸'); }
+  }
+}
+
+function calcPassive(){
+  let total=0;
+  BUILDINGS.forEach(b=>{
+    const o=G.buildings[b.id];
+    if(!o||o.level<1)return;
+    // level 1=1×, level 2=2×, level 3=3.5× (index is level-1)
+    const lm=[1,2,3.5][o.level-1]||1;
+    total+=b.b*lm*G.passBoost;
+  });
+  return Math.floor(total);
+}
+
+function fireNews(){
+  const s=G.stocks[Math.floor(Math.random()*G.stocks.length)];
+  const n=NEWS_POOL[Math.floor(Math.random()*NEWS_POOL.length)];
+  s.sent=(s.sent||0)+n.sent;
+  const icon=n.col==='g'?'🟢':n.col==='r'?'🔴':'🟡';
+  toast(icon+' '+n.f(s), n.col==='r'?'r':n.col==='y'?'y':'');
+  if(Math.random()<.03) triggerCrash();
+  if(G.moonActive&&!G.moonUsed&&Math.random()<.12) doMoonShot();
+}
+
+function triggerCrash(){
+  document.getElementById('crash-fx').style.display='block';
+  const severity=G.crashShield?-3:-10;
+  G.stocks.filter(s=>s.k==='CRYPTO').forEach(s=>s.sent+=severity);
+  toast('💥 MARKET CRASH! Crypto bleeding!','r');
+  if(G.crashShield) setTimeout(()=>toast('🛡️ Crash Insurance softened the blow!','y'),400);
+  setTimeout(()=>document.getElementById('crash-fx').style.display='none',3000);
+}
+
+function doMoonShot(){
+  G.moonUsed=true;
+  const cryptos=G.stocks.filter(s=>s.k==='CRYPTO');
+  const target=cryptos[Math.floor(Math.random()*cryptos.length)];
+  target.cur*=5; target.sent=15;
+  toast('🚀 MOON SHOT! '+target.t+' just 5×\'d!','y');
+  showGpop('🚀','MOON SHOT!',`<strong style="color:var(--green)">${target.n} (${target.t})</strong> rocketed <strong style="color:var(--gold)">5×</strong> overnight!<br><br>Hope you were holding some. 💰`);
+}
+
+function advanceDay(){
+  G.day++;
+  G.moonUsed=false;
+  G.dayStartNW=getNW();
+  G.stocks.forEach(s=>s.open=s.cur);
+  const mood=Math.random()<.5?'🐂 Bullish':'🐻 Bearish';
+  toast(`📅 Day ${G.day} — ${mood}`,'y');
+  saveGame();
+  renderAll();
+}
+
+/* ════════════════════════════════════════════
+   APPLY UPGRADES FROM SAVE
+════════════════════════════════════════════ */
+function applyAllUpgrades(){
+  if(G.upgrades['insider'])  G.volMult=0.8;
+  if(G.upgrades['passive'])  G.passBoost=1.5;
+  if(G.upgrades['shield'])   G.crashShield=true;
+  if(G.upgrades['dividend']) G.dividends=true;
+  if(G.upgrades['maker'])    G.tradeBonus=0.01;
+  if(G.upgrades['moon'])     G.moonActive=true;
+  if(G.upgrades['oracle'])   G.oracle=true;
+}
+
+/* ════════════════════════════════════════════
+   TRADING
+════════════════════════════════════════════ */
+function selectStock(ticker){
+  G.sel=ticker;
+  G.qty=1;
+  document.getElementById('tpanel').classList.add('show');
+  renderStockCards();
+  updateTP();
+  setTimeout(()=>document.getElementById('tpanel').scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+}
+
+function adjQ(d){
+  G.qty=Math.max(1,G.qty+d);
+  updateTP();
+}
+function setQ(n){ G.qty=n; updateTP(); }
+function setQP(pct){
+  const s=getSel(); if(!s)return;
+  G.qty=Math.max(1,Math.floor(G.cash*pct/s.cur));
+  updateTP();
+}
+
+function getSel(){return G.stocks.find(s=>s.t===G.sel)||null;}
+
+function updateTP(){
+  const s=getSel(); if(!s)return;
+  const chg=(s.cur-s.open)/s.open*100;
+  document.getElementById('tp-title').textContent=s.e+' '+s.t+' — '+s.n;
+  document.getElementById('tp-pr').textContent='$'+fmtP(s.cur);
+  const ce=document.getElementById('tp-ch');
+  ce.textContent=(chg>=0?'▲ +':'▼ ')+Math.abs(chg).toFixed(2)+'%';
+  ce.style.color=chg>=0?'var(--green)':'var(--red)';
+  document.getElementById('qdis').textContent=G.qty;
+  document.getElementById('tp-cost').textContent='$'+fmtN(G.qty*s.cur);
+  const pos=G.pos[s.t];
+  let ownStr=(pos&&pos.qty>0)?pos.qty+' shares':'0 shares';
+  if(G.oracle){
+    const hint=s.sent>0.5?'📈 Trending UP':s.sent<-0.5?'📉 Trending DOWN':'➡️ Sideways';
+    ownStr+=' · '+hint;
+  }
+  document.getElementById('tp-own').textContent=ownStr;
+}
+
+function trade(side){
+  const s=getSel();
+  if(!s){toast('❌ Select a stock first!','r');return;}
+  if(G.qty<1){toast('❌ Quantity must be at least 1','r');return;}
+
+  if(side==='buy'){
+    const cost=G.qty*s.cur;
+    if(cost>G.cash){toast('❌ Not enough cash! Need $'+fmtN(cost),'r');return;}
+    G.cash-=cost;
+    if(G.tradeBonus>0) G.cash+=cost*G.tradeBonus;
+    if(!G.pos[s.t]) G.pos[s.t]={qty:0,avg:0};
+    const pos=G.pos[s.t];
+    pos.avg=(pos.qty*pos.avg+cost)/(pos.qty+G.qty);
+    pos.qty+=G.qty;
+    G.totalTrades++;
+    spawnCoin('Bought '+G.qty+'× '+s.t);
+    toast('🟢 Bought '+G.qty+'× '+s.t+' @ $'+fmtP(s.cur),'');
+
+  } else {
+    const pos=G.pos[s.t];
+    if(!pos||pos.qty<G.qty){toast('❌ Not enough shares to sell!','r');return;}
+    const revenue=G.qty*s.cur;
+    const pnl=(s.cur-pos.avg)*G.qty;
+    G.cash+=revenue;
+    pos.qty-=G.qty;
+    if(pos.qty===0) pos.avg=0;
+    G.totalTrades++;
+    if(pnl>G.bestTrade) G.bestTrade=pnl;
+    spawnCoin((pnl>=0?'+':'')+' $'+Math.abs(pnl).toFixed(0));
+    toast((pnl>=0?'🟢':'🔴')+' Sold '+G.qty+'× '+s.t+' — P&L: '+(pnl>=0?'+':'')+' $'+fmtN(Math.abs(pnl)), pnl<0?'r':'');
+  }
+  updateTP();
+}
+
+function sellAll(ticker){
+  const s=G.stocks.find(x=>x.t===ticker);
+  const pos=G.pos[ticker];
+  if(!s||!pos||pos.qty===0){toast('❌ Nothing to sell','r');return;}
+  const revenue=pos.qty*s.cur;
+  const pnl=(s.cur-pos.avg)*pos.qty;
+  G.cash+=revenue;
+  pos.qty=0; pos.avg=0;
+  G.totalTrades++;
+  if(pnl>G.bestTrade) G.bestTrade=pnl;
+  toast((pnl>=0?'🟢':'🔴')+' Sold all '+ticker+' — P&L: '+(pnl>=0?'+':'')+' $'+fmtN(Math.abs(pnl)), pnl<0?'r':'');
+  renderPortfolio();
+  renderAll();
+}
+
+/* ════════════════════════════════════════════
+   BUILDINGS
+════════════════════════════════════════════ */
+function getBCost(b,owned){
+  return Math.floor(b.c*Math.pow(2.2, owned?owned.level:0));
+}
+
+function buyBuilding(id){
+  const b=BUILDINGS.find(x=>x.id===id);
+  if(!b){return;}
+  const owned=G.buildings[id];
+  if(owned&&owned.level>=b.m){toast('✅ Already maxed out!','y');return;}
+  const cost=getBCost(b,owned);
+  if(G.cash<cost){toast('❌ Need $'+fmtN(cost)+' — keep trading!','r');return;}
+  G.cash-=cost;
+  if(!owned) G.buildings[id]={level:1};
+  else owned.level++;
+  const lv=G.buildings[id].level;
+  spawnCoin(b.e+' '+b.n+' LV'+lv+'!');
+  toast('🏗️ '+b.n+' built! (Level '+lv+')','y');
+  rebuildSkyline();
+  renderBuildings();
+  renderAll();
+}
+
+/* ════════════════════════════════════════════
+   UPGRADES
+════════════════════════════════════════════ */
+function buyUpgrade(id){
+  if(G.upgrades[id]){toast('✅ Already active!','y');return;}
+  const u=UPGRADES.find(x=>x.id===id);
+  if(!u){return;}
+  if(G.cash<u.c){toast('❌ Need $'+fmtN(u.c)+' for this upgrade','r');return;}
+  G.cash-=u.c;
+  G.upgrades[id]=true;
+  // Apply effect immediately
+  if(id==='turbo'){
+    clearInterval(_tick);
+    _tick=setInterval(tickPrices,400/G.speed);
+  }
+  if(id==='insider')  G.volMult=0.8;
+  if(id==='passive')  G.passBoost=1.5;
+  if(id==='shield')   G.crashShield=true;
+  if(id==='dividend') G.dividends=true;
+  if(id==='maker')    G.tradeBonus=0.01;
+  if(id==='moon')     G.moonActive=true;
+  if(id==='oracle')   G.oracle=true;
+  toast('⚗️ Unlocked: '+u.n+'!','y');
+  showGpop(u.e, 'UPGRADE UNLOCKED', '<strong style="color:var(--white)">'+u.n+'</strong><br><br>'+u.d+'<br><br><strong style="color:var(--blue)">'+u.f+'</strong>');
+  renderUpgrades();
+  renderAll();
+}
+
+/* ════════════════════════════════════════════
+   SKYLINE BUILDER
+════════════════════════════════════════════ */
+function rebuildSkyline(){
+  const sky=document.getElementById('skyline');
+  sky.innerHTML='';
+  const owned=Object.entries(G.buildings).filter(([_,v])=>v&&v.level>0);
+  if(!owned.length)return;
+  let x=16;
+  owned.forEach(([id,data],i)=>{
+    const b=BUILDINGS.find(b=>b.id===id);
+    if(!b)return;
+    const lv=data.level;
+    const w=32+lv*16+i*6;
+    const h=36+lv*26+i*9;
+    const el=document.createElement('div');
+    el.className='bld';
+    el.style.cssText=`left:${x}px;width:${w}px;height:${h}px;`;
+    let wins='';
+    const cols=Math.floor(w/9), rows2=Math.floor(h/11);
+    for(let r=0;r<rows2;r++)
+      for(let c=0;c<cols;c++)
+        wins+=`<span class="bw ${Math.random()<.62?'on':'off'}"></span>`;
+    el.innerHTML=wins;
+    sky.appendChild(el);
+    x+=w+5;
+  });
+}
+
+/* ════════════════════════════════════════════
+   RENDER FUNCTIONS
+════════════════════════════════════════════ */
+function renderAll(){
+  renderHeader();
+  renderStockCards();
+  renderPortfolio();
+  // passive
+  const inc=calcPassive();
+  document.getElementById('h-pass').textContent='+$'+inc+'/min';
+  document.getElementById('pass-badge').textContent='+$'+inc+' / min';
+  const nw=getNW();
+  document.getElementById('city-name').textContent=
+    nw>=1e6?'🌆 Brody Metropolis':nw>=250000?'🏙️ Brody City':nw>=50000?'🏘️ Brody Town':'🏙️ Your City';
+  // keep building/upgrade buttons fresh if tabs open
+  if(document.getElementById('tab-city').classList.contains('active')) renderBuildings();
+  if(document.getElementById('tab-upg').classList.contains('active')) renderUpgrades();
+}
+
+function renderHeader(){
+  const nw=getNW(), dp=nw-G.dayStartNW;
+  document.getElementById('h-cash').textContent='$'+fmtN(G.cash);
+  document.getElementById('h-nw').textContent='$'+fmtN(nw);
+  const pe=document.getElementById('h-pnl');
+  pe.textContent=(dp>=0?'+ $':'- $')+fmtN(Math.abs(dp));
+  pe.className='vl '+(dp>=0?'g':'r');
+  document.getElementById('day-badge').textContent='DAY '+G.day;
+  if(G.sel) updateTP();
+}
+
+function renderStockCards(){
+  const grid=document.getElementById('sg');
+  grid.innerHTML=G.stocks.map(s=>{
+    const chg=(s.cur-s.open)/s.open*100;
+    const dir=chg>=0?'up':'dn';
+    const sel=s.t===G.sel?'sel':'';
+    return `<div class="sc ${dir} ${sel}" onclick="selectStock('${s.t}')">
+      <div class="sc-top">
+        <span class="sc-tkr">${s.e} ${s.t}</span>
+        <span class="sc-tag">${s.k}</span>
+      </div>
+      <div class="sc-nm">${s.n}</div>
+      <div class="sc-pr" style="color:${chg>=0?'var(--green)':'var(--red)'}">${'$'+fmtP(s.cur)}</div>
+      <div class="sc-ch ${dir}">${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(2)}%</div>
+      <div class="sc-sp"><canvas id="sp-${s.t}" width="160" height="28"></canvas></div>
+    </div>`;
+  }).join('');
+  // draw sparklines after DOM update
+  requestAnimationFrame(()=>{
+    G.stocks.forEach(s=>{
+      const c=document.getElementById('sp-'+s.t);
+      if(c) drawSpark(c, s.hist, s.cur>=s.open);
+    });
+  });
+}
+
+function drawSpark(canvas,pts,isUp){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(pts.length<2)return;
+  const mn=Math.min(...pts), mx=Math.max(...pts), rng=mx-mn||1;
+  const tx=i=>(i/(pts.length-1))*W;
+  const ty=p=>H-((p-mn)/rng)*(H-4)-2;
+  ctx.beginPath();
+  pts.forEach((p,i)=>i===0?ctx.moveTo(tx(0),ty(p)):ctx.lineTo(tx(i),ty(p)));
+  ctx.strokeStyle=isUp?'#00e676':'#ff1744';
+  ctx.lineWidth=1.5;
+  ctx.stroke();
+}
+
+function renderPortfolio(){
+  const nw=getNW(), hold=nw-G.cash, pnl=nw-G.startCash;
+  document.getElementById('pt-cash').textContent='$'+fmtN(G.cash);
+  document.getElementById('pt-hold').textContent='$'+fmtN(Math.max(0,hold));
+  const nwEl=document.getElementById('pt-nw');
+  nwEl.textContent='$'+fmtN(nw);
+  nwEl.className='vl '+(pnl>=0?'g':'r');
+  const pEl=document.getElementById('pt-pnl');
+  pEl.textContent=(pnl>=0?'+ $':'- $')+fmtN(Math.abs(pnl));
+  pEl.className='vl '+(pnl>=0?'g':'r');
+
+  const rows=Object.entries(G.pos)
+    .filter(([_,p])=>p.qty>0)
+    .map(([ticker,pos])=>{
+      const s=G.stocks.find(x=>x.t===ticker);
+      if(!s)return'';
+      const val=s.cur*pos.qty;
+      const pnl2=(s.cur-pos.avg)*pos.qty;
+      return `<div class="hr">
+        <div class="hr-t">${s.e} ${ticker}</div>
+        <div class="hr-mid">
+          <div class="hr-q">${pos.qty} shares · avg $${fmtP(pos.avg)}</div>
+          <div class="hr-v">$${fmtN(val)}</div>
+        </div>
+        <div class="hr-pnl ${pnl2>=0?'g':'r'}">${pnl2>=0?'+ $':'- $'}${fmtN(Math.abs(pnl2))}</div>
+        <button class="sa-btn" onclick="sellAll('${ticker}')">Sell All</button>
+      </div>`;
+    }).join('');
+
+  document.getElementById('hold-list').innerHTML=rows||
+    '<div style="color:var(--dim);padding:24px;text-align:center;font-size:.9rem">No positions yet.<br>Go to the Market tab and buy something! 📈</div>';
+}
+
+function renderBuildings(){
+  document.getElementById('bld-grid').innerHTML=BUILDINGS.map(b=>{
+    const o=G.buildings[b.id];
+    const lv=o?o.level:0;
+    const cost=getBCost(b,o);
+    const maxd=lv>=b.m;
+    const can=!maxd&&G.cash>=cost;
+    const incMult=lv>0?([1,2,3.5][lv-1]||1):1;
+    const inc=Math.floor(b.b*incMult*G.passBoost);
+    const pct=(lv/b.m)*100;
+    const bCls=maxd?'maxd':can?'can':'cant';
+    const bTxt=maxd?'✅ MAXED OUT'
+      :can?(lv>0?'⬆ UPGRADE — $'+fmtN(cost):'🏗️ BUILD — $'+fmtN(cost))
+      :'$'+fmtN(cost)+' needed';
+    return `<div class="bcard">
+      ${lv>0?`<div class="bcard-lv">LV ${lv}</div>`:''}
+      <div class="bcard-ico">${b.e}</div>
+      <div class="bcard-nm">${b.n}</div>
+      <div class="bcard-ds">${b.d}</div>
+      <div class="bcard-bar"><div class="bcard-fill" style="width:${pct}%"></div></div>
+      <div class="bcard-inc">+$${inc}/min</div>
+      <button class="bcard-btn ${bCls}" onclick="buyBuilding('${b.id}')">${bTxt}</button>
+    </div>`;
+  }).join('');
+}
+
+function renderUpgrades(){
+  document.getElementById('upg-grid').innerHTML=UPGRADES.map(u=>{
+    const owned=!!G.upgrades[u.id];
+    const can=!owned&&G.cash>=u.c;
+    const bCls=owned?'owned':can?'can':'cant';
+    const bTxt=owned?'✅ ACTIVE':can?'UNLOCK — $'+fmtN(u.c):'$'+fmtN(u.c)+' needed';
+    return `<div class="ucard">
+      <div class="ucard-ico">${u.e}</div>
+      <div class="ucard-nm">${u.n}</div>
+      <div class="ucard-ds">${u.d}</div>
+      <div class="ucard-ef">${u.f}</div>
+      <button class="ucard-btn ${bCls}" onclick="buyUpgrade('${u.id}')">${bTxt}</button>
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════════
+   UI HELPERS
+════════════════════════════════════════════ */
+function showTab(id,el){
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  const panel=document.getElementById('tab-'+id);
+  if(panel) panel.classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='city'){renderBuildings();rebuildSkyline();}
+  if(id==='upg')renderUpgrades();
+  if(id==='port')renderPortfolio();
+}
+
+function toggleSpeed(){
+  G.speed=G.speed===1?3:G.speed===3?6:1;
+  document.getElementById('spd-btn').textContent='⚡ '+G.speed+'×';
+  bootGame();
+}
+
+function getNW(){
+  let nw=G.cash;
+  Object.entries(G.pos).forEach(([t,p])=>{
+    const s=G.stocks.find(x=>x.t===t);
+    if(s&&p.qty>0) nw+=s.cur*p.qty;
+  });
+  return nw;
+}
+
+function fmtN(n){
+  const abs=Math.abs(n);
+  if(abs>=1e6) return (n/1e6).toFixed(2)+'M';
+  if(abs>=1000)return (n/1000).toFixed(1)+'K';
+  return n.toFixed(2);
+}
+function fmtP(n){
+  return n<1?n.toFixed(4):n.toFixed(2);
+}
+
+function toast(msg, col){
+  const a=document.getElementById('news-area');
+  const el=document.createElement('div');
+  el.className='nt'+(col?' '+col:'');
+  el.textContent=msg;
+  a.appendChild(el);
+  setTimeout(()=>el&&el.remove(), 4600);
+}
+
+function spawnCoin(txt){
+  const el=document.createElement('div');
+  el.className='coin';
+  el.textContent=txt;
+  el.style.left=(20+Math.random()*60)+'vw';
+  el.style.top=(30+Math.random()*30)+'vh';
+  document.body.appendChild(el);
+  setTimeout(()=>el&&el.remove(), 1200);
+}
+
+function showGpop(emo,title,msg){
+  document.getElementById('gpop-emo').textContent=emo;
+  document.getElementById('gpop-title').textContent=title;
+  document.getElementById('gpop-msg').innerHTML=msg;
+  document.getElementById('gpop').classList.add('on');
+}
+function closeGpop(){ document.getElementById('gpop').classList.remove('on'); }
+
+/* ════════════════════════════════════════════
+   TUTORIAL
+   — Full-screen bottom card, no DOM position
+   — Game engine does NOT run during tutorial
+════════════════════════════════════════════ */
+const TUT=[
+  {
+    g:'🏙️',
+    title:'Welcome to Brody.io!',
+    body:'You start with <strong style="color:var(--gold)">$5,000 cash</strong>. Buy stocks to profit, build a city for passive income, and unlock upgrades to dominate the market!',
+    hl:null, btn:'Let\'s go! →',
+  },
+  {
+    g:'📈',
+    title:'The Market Tab',
+    body:'The <strong style="color:var(--accent)">Market tab</strong> shows all 17 stocks — regular stocks and wild crypto coins. Each card shows the current price and a mini chart. <strong>Green = going up. Red = going down.</strong>',
+    hl:'tab-btn-market', btn:'Got it →',
+    action:()=>showTab('market',document.getElementById('tab-btn-market')),
+  },
+  {
+    g:'💰',
+    title:'Buying Stocks',
+    body:'<strong>Tap any stock card</strong> to open the trade panel. Use <strong>+/−</strong> to set how many shares, or hit <strong>🔥 All In</strong> to go big. Then press <strong style="color:var(--green)">BUY</strong>!',
+    hl:'sg', btn:'Nice →',
+  },
+  {
+    g:'💸',
+    title:'Selling for Profit',
+    body:'When a stock goes up, <strong>sell it for profit!</strong> Press <strong style="color:var(--red)">SELL</strong> in the trade panel, or go to the <strong>Portfolio tab</strong> and hit <em>Sell All</em> on any position.',
+    hl:null, btn:'Understood →',
+  },
+  {
+    g:'🏗️',
+    title:'Build Your City',
+    body:'Go to the <strong style="color:var(--blue)">City tab</strong> to buy buildings. A <strong>Street Kiosk</strong> earns you $10/min passively — even when you\'re not trading. Upgrade buildings 3× for massive bonuses!',
+    hl:'tab-btn-city', btn:'Show me →',
+    action:()=>showTab('city',document.getElementById('tab-btn-city')),
+  },
+  {
+    g:'⚗️',
+    title:'Market Upgrades',
+    body:'The <strong style="color:var(--purple)">Upgrades tab</strong> has permanent power-ups: faster prices, crash insurance, dividends, and the legendary <strong>Moon Protocol</strong> that 5×\'s a crypto once a day!',
+    hl:'tab-btn-upg', btn:'Awesome →',
+    action:()=>showTab('upg',document.getElementById('tab-btn-upg')),
+  },
+  {
+    g:'🚀',
+    title:'Ready to Trade!',
+    body:'📈 <strong>Trade stocks</strong> to grow your cash fast.<br>🏗️ <strong>Build your city</strong> for passive income.<br>⚗️ <strong>Buy upgrades</strong> to go parabolic.<br><br><strong style="color:var(--gold)">Good luck. The market waits for no one!</strong>',
+    hl:null, btn:'Start Trading! 🚀',
+    action:()=>showTab('market',document.getElementById('tab-btn-market')),
+  },
+];
+
+let tutIdx=0;
+
+function startTutorial(){
+  tutIdx=0;
+  document.getElementById('tut-wrap').classList.add('on');
+  renderTutStep();
+}
+
+function renderTutStep(){
+  const step=TUT[tutIdx];
+  const total=TUT.length;
+
+  // progress bar
+  document.getElementById('tut-prog-fill').style.width=((tutIdx/total)*100)+'%';
+  // step label
+  document.getElementById('tut-step-lbl').textContent='STEP '+(tutIdx+1)+' OF '+total;
+  // content (re-create graphic to re-trigger animation)
+  const gEl=document.getElementById('tut-graphic');
+  gEl.style.animation='none';
+  gEl.textContent=step.g;
+  requestAnimationFrame(()=>{ gEl.style.animation=''; gEl.style.animation='tGfx .5s cubic-bezier(.34,1.56,.64,1)'; });
+  document.getElementById('tut-title').textContent=step.title;
+  document.getElementById('tut-body').innerHTML=step.body;
+  document.getElementById('tut-next').textContent=step.btn||'Next →';
+
+  // dots
+  let dots='';
+  for(let i=0;i<total;i++) dots+=`<div class="tut-dot${i===tutIdx?' on':''}"></div>`;
+  document.getElementById('tut-dots').innerHTML=dots;
+
+  // clear old highlight
+  document.querySelectorAll('.tut-highlight').forEach(el=>el.classList.remove('tut-highlight'));
+  // apply new highlight
+  if(step.hl){
+    const target=document.getElementById(step.hl);
+    if(target) target.classList.add('tut-highlight');
+  }
+  // run any tab-switch action
+  if(step.action) step.action();
+}
+
+function tutAdvance(){
+  // clear highlight from current step
+  const cur=TUT[tutIdx];
+  if(cur.hl){
+    const el=document.getElementById(cur.hl);
+    if(el) el.classList.remove('tut-highlight');
+  }
+  tutIdx++;
+  if(tutIdx>=TUT.length){
+    tutEnd();
+    return;
+  }
+  renderTutStep();
+}
+
+function tutEnd(){
+  // clear any leftover highlights
+  document.querySelectorAll('.tut-highlight').forEach(el=>el.classList.remove('tut-highlight'));
+  document.getElementById('tut-wrap').classList.remove('on');
+  // Go to market
+  showTab('market',document.getElementById('tab-btn-market'));
+  // NOW start the game engine
+  bootGame();
+  toast('🚀 Let\'s trade! Good luck!','y');
+}
+
+/* ════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════ */
+initWelcome();
+</script>
+</body>
+</html>
