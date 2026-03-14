@@ -3,223 +3,224 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Brody.io Documentation</title>
+<title>Brody.io Deep-Dive Documentation</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism-tomorrow.min.css">
 <style>
-  :root {
-    --primary-color: #1e3a8a;
-    --accent-color: #facc15;
-    --bg-color: #f9fafb;
-    --card-bg: #fff;
-    --shadow-color: rgba(0,0,0,0.05);
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    background: var(--bg-color);
-    color: #111;
-  }
-
-  header {
-    background: var(--primary-color);
-    color: #fff;
-    padding: 2rem;
-    text-align: center;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 2.5rem;
-  }
-
-  header p {
-    margin-top: 0.5rem;
-    font-size: 1.2rem;
-    color: #fcd34d;
-  }
-
-  main {
-    max-width: 1000px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-
-  .section-card {
-    background: var(--card-bg);
-    padding: 1.5rem 2rem;
-    margin-bottom: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px var(--shadow-color);
-    transition: transform 0.2s;
-  }
-
-  .section-card:hover {
-    transform: translateY(-4px);
-  }
-
-  .section-card h2 {
-    color: var(--primary-color);
-    margin-top: 0;
-    cursor: pointer;
-  }
-
-  .section-card h3 {
-    margin-bottom: 0.5rem;
-    color: #111;
-  }
-
-  .section-card ul, .section-card table {
-    margin-top: 0.5rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th, td {
-    border: 1px solid #ddd;
-    padding: 0.5rem;
-  }
-
-  th {
-    background: var(--bg-color);
-    text-align: left;
-  }
-
-  .collapsible {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-
-  .active + .collapsible {
-    max-height: 1000px;
-  }
-
-  a {
-    color: var(--primary-color);
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
+:root {
+  --primary:#1e3a8a;
+  --accent:#facc15;
+  --bg:#f4f5f7;
+  --card:#fff;
+  --shadow:rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:#111;}
+header{position:sticky;top:0;background:var(--primary);color:#fff;padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;z-index:10;}
+header h1{margin:0;font-size:2rem;}
+header nav a{color:#fcd34d;margin-left:1rem;text-decoration:none;font-weight:600;}
+header nav a:hover{text-decoration:underline;}
+.container{display:flex;max-width:1400px;margin:2rem auto;gap:2rem;padding:0 1rem;}
+.sidebar{flex:0 0 280px;position:sticky;top:100px;background:var(--card);border-radius:12px;padding:1rem;box-shadow:0 4px 12px var(--shadow);height:fit-content;}
+.sidebar h3{margin-top:0;color:var(--primary);}
+.sidebar a{display:block;margin:0.5rem 0;color:var(--primary);text-decoration:none;}
+.sidebar a:hover{text-decoration:underline;}
+main{flex:1;display:flex;flex-direction:column;gap:1.5rem;}
+.section-card{background:var(--card);padding:1.5rem 2rem;border-radius:12px;box-shadow:0 4px 12px var(--shadow);transition:transform 0.3s,box-shadow 0.3s;cursor:pointer;}
+.section-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px var(--shadow);}
+.section-card h2{margin-top:0;color:var(--primary);display:flex;justify-content:space-between;align-items:center;}
+.section-card h2 span{font-size:0.85rem;color:var(--accent);}
+.collapsible{max-height:0;overflow:hidden;transition:max-height 0.5s ease,padding 0.3s ease;}
+.active+.collapsible{max-height:5000px;padding-top:1rem;}
+.tab-container{display:flex;margin-top:1rem;border-bottom:2px solid #ddd;}
+.tab{padding:0.5rem 1rem;cursor:pointer;font-weight:600;border-radius:6px 6px 0 0;margin-right:0.5rem;}
+.tab.active{background:var(--primary);color:#fff;}
+.tab-content{display:none;margin-top:1rem;}
+.tab-content.active{display:block;}
+code{font-family:'Roboto Mono',monospace;background:#1e1e1e;color:#f8f8f2;padding:0.2rem 0.4rem;border-radius:4px;}
+pre{background:#1e1e1e;color:#f8f8f2;padding:1rem;border-radius:6px;overflow-x:auto;}
+.tooltip{position:relative;display:inline-block;cursor:help;}
+.tooltip .tooltiptext{visibility:hidden;width:220px;background:var(--primary);color:#fff;text-align:center;border-radius:6px;padding:0.5rem;position:absolute;z-index:1;bottom:125%;left:50%;transform:translateX(-50%);opacity:0;transition:opacity 0.3s;}
+.tooltip:hover .tooltiptext{visibility:visible;opacity:1;}
+@media(max-width:900px){.container{flex-direction:column}.sidebar{position:relative;top:auto;width:100%;margin-bottom:1rem;}}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Brody.io Documentation</h1>
-  <p>Developer Guide for <a href="https://brody.jagansharma.com" target="_blank">brody.jagansharma.com</a></p>
+<h1>Brody.io Deep-Dive Docs</h1>
+<nav><a href="https://brody.jagansharma.com" target="_blank">Live Site</a></nav>
 </header>
 
+<div class="container">
+<aside class="sidebar">
+<h3>Sections</h3>
+<a href="#overview">Overview</a>
+<a href="#components">Components</a>
+<a href="#mechanics">Mechanics</a>
+<a href="#architecture">Architecture</a>
+<a href="#ux">UI/UX</a>
+<a href="#next">Next Steps</a>
+</aside>
+
 <main>
-
-<div class="section-card">
-  <h2 onclick="toggleSection(this)">1. Overview</h2>
-  <div class="collapsible">
-    <p>Brody.io is a trading simulation game with incremental, city-building mechanics. Players manage cash, net worth, stock trading, and upgrades.</p>
-    <ul>
-      <li>Real-time trading dashboard</li>
-      <li>Portfolio and market overview</li>
-      <li>City-building and upgrade system</li>
-      <li>Auto-save every 30 seconds</li>
-    </ul>
-  </div>
+<!-- Overview -->
+<div class="section-card" id="overview">
+<h2>1. Overview <span>Click to Expand</span></h2>
+<div class="collapsible">
+<p>Brody.io is a real-time trading simulation game combined with incremental city-building mechanics. Players manage cash, net worth, stock trades, and upgrades while building their city strategically.</p>
+<ul>
+<li>Trading dashboard & portfolio</li>
+<li>Passive income from city buildings</li>
+<li>Incremental upgrades & compounding earnings</li>
+<li>Auto-save every 30 seconds</li>
+</ul>
+</div>
 </div>
 
-<div class="section-card">
-  <h2 onclick="toggleSection(this)">2. Game Interface Components</h2>
-  <div class="collapsible">
-    <h3>2.1 Header</h3>
-    <ul>
-      <li>Title: <strong>BRODY.IO</strong></li>
-      <li>Navigation: "New Game" / "Continue"</li>
-      <li>Auto-save indicator</li>
-    </ul>
+<!-- Components -->
+<div class="section-card" id="components">
+<h2>2. Components <span>Click to Expand</span></h2>
+<div class="collapsible">
 
-    <h3>2.2 Tutorial / Stepper</h3>
-    <ul>
-      <li>Step indicator: "STEP 1 OF 7"</li>
-      <li>Buttons: "Next", "Skip"</li>
-    </ul>
-
-    <h3>2.3 Dashboard</h3>
-    <table>
-      <thead>
-        <tr><th>Component</th><th>Description</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Cash</td><td>Current cash available</td></tr>
-        <tr><td>Net Worth</td><td>Total net worth</td></tr>
-        <tr><td>Today P&L</td><td>Profit or Loss for the day</td></tr>
-        <tr><td>Passive/min</td><td>Passive income per minute</td></tr>
-        <tr><td>Day Counter</td><td>Current in-game day</td></tr>
-      </tbody>
-    </table>
-
-    <h3>2.4 Market & Trading</h3>
-    <ul>
-      <li>Select stock, adjust quantity, BUY / SELL</li>
-    </ul>
-
-    <h3>2.5 Portfolio</h3>
-    <ul>
-      <li>Cash, holdings, net worth, all-time P&L</li>
-    </ul>
-
-    <h3>2.6 City / Buildings</h3>
-    <ul>
-      <li>Buildings generate passive income</li>
-      <li>Upgrades improve earnings</li>
-    </ul>
-  </div>
+<div class="tab-container">
+<div class="tab active" data-tab="header">Header</div>
+<div class="tab" data-tab="dashboard">Dashboard</div>
+<div class="tab" data-tab="market">Market</div>
+<div class="tab" data-tab="city">City</div>
+<div class="tab" data-tab="tutorial">Tutorial</div>
 </div>
 
-<div class="section-card">
-  <h2 onclick="toggleSection(this)">3. Game Mechanics</h2>
-  <div class="collapsible">
-    <ul>
-      <li>Auto-saving every 30 seconds</li>
-      <li>Incremental upgrades compound earnings</li>
-      <li>Trading affects cash, net worth, and P&L</li>
-      <li>City buildings produce passive income continuously</li>
-    </ul>
-  </div>
+<div class="tab-content active" id="header">
+<h3>Header</h3>
+<ul>
+<li>Title: <strong>BRODY.IO</strong></li>
+<li>Navigation buttons (New Game / Continue)</li>
+<li>Auto-save indicator <span class="tooltip">Hover<span class="tooltiptext">Shows last auto-save timestamp</span></span></li>
+</ul>
 </div>
 
-<div class="section-card">
-  <h2 onclick="toggleSection(this)">4. UI/UX Notes</h2>
-  <div class="collapsible">
-    <ul>
-      <li>Tutorial guides new players</li>
-      <li>Interactive trading controls</li>
-      <li>Dashboard provides instant feedback</li>
-      <li>Visual hierarchy separates trading, portfolio, city</li>
-    </ul>
-  </div>
+<div class="tab-content" id="dashboard">
+<h3>Dashboard</h3>
+<table>
+<thead><tr><th>Component</th><th>Description</th><th>Behavior</th></tr></thead>
+<tbody>
+<tr><td>Cash</td><td>Current cash available</td><td>Updates in real-time after trades</td></tr>
+<tr><td>Net Worth</td><td>Total assets</td><td>Dynamic calculation including buildings and portfolio</td></tr>
+<tr><td>Today P&L</td><td>Daily profit/loss</td><td>Formula: <code>(currentPrice - buyPrice)*shares</code></td></tr>
+<tr><td>Passive/min</td><td>Passive income/min</td><td>Sum of all building incomes × upgrades</td></tr>
+<tr><td>Day Counter</td><td>In-game day</td><td>Incremented each game day cycle</td></tr>
+</tbody>
+</table>
+<pre><code>// Example JS formula
+function calculatePL(currentPrice,buyPrice,shares){return (currentPrice-buyPrice)*shares;}
+</code></pre>
 </div>
 
-<div class="section-card">
-  <h2 onclick="toggleSection(this)">5. Next Steps / Recommendations</h2>
-  <div class="collapsible">
-    <ul>
-      <li>Document formulas for trading, P&L, passive income</li>
-      <li>Create visual mockups for each UI panel</li>
-      <li>Track upgrade costs, multipliers, progression curves</li>
-      <li>Ensure accessibility and responsive layout</li>
-    </ul>
-  </div>
+<div class="tab-content" id="market">
+<h3>Market & Trading</h3>
+<ul>
+<li>Buy/Sell controls with quantity adjustment</li>
+<li>Real-time portfolio updates</li>
+<li>Hover previews of costs and holdings</li>
+</ul>
+<pre><code>// Buy function example
+function buyStock(stock,qty){
+  if(cash>=stock.price*qty){ holdings[stock.id]+=qty; cash-=stock.price*qty; }
+}
+</code></pre>
+</div>
+
+<div class="tab-content" id="city">
+<h3>City / Buildings</h3>
+<ul>
+<li>Buildings generate passive income</li>
+<li>Upgrades multiply earnings (max 3 per building)</li>
+<li>Buildings visually update on dashboard</li>
+</ul>
+<pre><code>// Passive income calculation
+function passiveIncome(){
+  return buildings.reduce((sum,b)=>sum+b.base*b.multiplier,0);
+}
+</code></pre>
+</div>
+
+<div class="tab-content" id="tutorial">
+<h3>Tutorial / Stepper</h3>
+<ul>
+<li>Guides players through steps 1–7</li>
+<li>Buttons: Next / Skip</li>
+<li>Animated progress indicator</li>
+</ul>
+</div>
+
+</div>
+</div>
+
+<!-- Mechanics -->
+<div class="section-card" id="mechanics">
+<h2>3. Game Mechanics <span>Click to Expand</span></h2>
+<div class="collapsible">
+<ul>
+<li>Auto-save every 30s (localStorage or backend)</li>
+<li>Incremental upgrades compound earnings</li>
+<li>Trading affects cash, net worth, and P&L</li>
+<li>Buildings produce passive income continuously</li>
+<li>Upgrade formulas: <code>income * (1 + 0.1*level)</code></li>
+</ul>
+</div>
+</div>
+
+<!-- Architecture -->
+<div class="section-card" id="architecture">
+<h2>4. Architecture & Data Flow <span>Click to Expand</span></h2>
+<div class="collapsible">
+<ul>
+<li>Frontend: React or vanilla JS</li>
+<li>State management: Redux / hooks / global store</li>
+<li>Auto-save logic: localStorage or API</li>
+<li>Event loop updates dashboard every second</li>
+<li>Component communication via props / events</li>
+</ul>
+</div>
+</div>
+
+<!-- UI/UX -->
+<div class="section-card" id="ux">
+<h2>5. UI/UX Notes <span>Click to Expand</span></h2>
+<div class="collapsible">
+<ul>
+<li>Step-based tutorial for onboarding</li>
+<li>Interactive trading controls</li>
+<li>Dashboard provides instant feedback</li>
+<li>Color hierarchy emphasizes importance</li>
+<li>Responsive layout for mobile & desktop</li>
+</ul>
+</div>
+</div>
+
+<!-- Next Steps -->
+<div class="section-card" id="next">
+<h2>6. Next Steps / Recommendations <span>Click to Expand</span></h2>
+<div class="collapsible">
+<ul>
+<li>Document formulas for trading, P&L, and passive income</li>
+<li>Create visual mockups for all UI panels</li>
+<li>Track upgrade multipliers and progression curves</li>
+<li>Accessibility improvements (ARIA labels, keyboard nav)</li>
+<li>Analytics hooks to track player behavior</li>
+</ul>
+</div>
 </div>
 
 </main>
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
 <script>
-function toggleSection(header) {
-  header.classList.toggle("active");
-}
+document.querySelectorAll('.section-card h2').forEach(h=>h.addEventListener('click',()=>{h.classList.toggle('active');}));
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{let c=t.parentElement.parentElement; t.parentElement.querySelectorAll('.tab').forEach(a=>a.classList.remove('active')); t.classList.add('active'); c.querySelectorAll('.tab-content').forEach(tc=>tc.classList.remove('active')); c.querySelector('#'+t.dataset.tab).classList.add('active');}));
+document.querySelectorAll('.sidebar a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});}));
 </script>
 
 </body>
