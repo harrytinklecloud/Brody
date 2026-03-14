@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brody.io Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary-color: #1e3a8a;
+    --accent-color: #facc15;
+    --bg-color: #f9fafb;
+    --card-bg: #fff;
+    --shadow-color: rgba(0,0,0,0.05);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background: var(--bg-color);
+    color: #111;
+  }
+
+  header {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+  }
+
+  header p {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: #fcd34d;
+  }
+
+  main {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .section-card {
+    background: var(--card-bg);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transition: transform 0.2s;
+  }
+
+  .section-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .section-card h2 {
+    color: var(--primary-color);
+    margin-top: 0;
+    cursor: pointer;
+  }
+
+  .section-card h3 {
+    margin-bottom: 0.5rem;
+    color: #111;
+  }
+
+  .section-card ul, .section-card table {
+    margin-top: 0.5rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+  }
+
+  th {
+    background: var(--bg-color);
+    text-align: left;
+  }
+
+  .collapsible {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .active + .collapsible {
+    max-height: 1000px;
+  }
+
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Brody.io Documentation</h1>
+  <p>Developer Guide for <a href="https://brody.jagansharma.com" target="_blank">brody.jagansharma.com</a></p>
+</header>
+
+<main>
+
+<div class="section-card">
+  <h2 onclick="toggleSection(this)">1. Overview</h2>
+  <div class="collapsible">
+    <p>Brody.io is a trading simulation game with incremental, city-building mechanics. Players manage cash, net worth, stock trading, and upgrades.</p>
+    <ul>
+      <li>Real-time trading dashboard</li>
+      <li>Portfolio and market overview</li>
+      <li>City-building and upgrade system</li>
+      <li>Auto-save every 30 seconds</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-card">
+  <h2 onclick="toggleSection(this)">2. Game Interface Components</h2>
+  <div class="collapsible">
+    <h3>2.1 Header</h3>
+    <ul>
+      <li>Title: <strong>BRODY.IO</strong></li>
+      <li>Navigation: "New Game" / "Continue"</li>
+      <li>Auto-save indicator</li>
+    </ul>
+
+    <h3>2.2 Tutorial / Stepper</h3>
+    <ul>
+      <li>Step indicator: "STEP 1 OF 7"</li>
+      <li>Buttons: "Next", "Skip"</li>
+    </ul>
+
+    <h3>2.3 Dashboard</h3>
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cash</td><td>Current cash available</td></tr>
+        <tr><td>Net Worth</td><td>Total net worth</td></tr>
+        <tr><td>Today P&L</td><td>Profit or Loss for the day</td></tr>
+        <tr><td>Passive/min</td><td>Passive income per minute</td></tr>
+        <tr><td>Day Counter</td><td>Current in-game day</td></tr>
+      </tbody>
+    </table>
+
+    <h3>2.4 Market & Trading</h3>
+    <ul>
+      <li>Select stock, adjust quantity, BUY / SELL</li>
+    </ul>
+
+    <h3>2.5 Portfolio</h3>
+    <ul>
+      <li>Cash, holdings, net worth, all-time P&L</li>
+    </ul>
+
+    <h3>2.6 City / Buildings</h3>
+    <ul>
+      <li>Buildings generate passive income</li>
+      <li>Upgrades improve earnings</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-card">
+  <h2 onclick="toggleSection(this)">3. Game Mechanics</h2>
+  <div class="collapsible">
+    <ul>
+      <li>Auto-saving every 30 seconds</li>
+      <li>Incremental upgrades compound earnings</li>
+      <li>Trading affects cash, net worth, and P&L</li>
+      <li>City buildings produce passive income continuously</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-card">
+  <h2 onclick="toggleSection(this)">4. UI/UX Notes</h2>
+  <div class="collapsible">
+    <ul>
+      <li>Tutorial guides new players</li>
+      <li>Interactive trading controls</li>
+      <li>Dashboard provides instant feedback</li>
+      <li>Visual hierarchy separates trading, portfolio, city</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-card">
+  <h2 onclick="toggleSection(this)">5. Next Steps / Recommendations</h2>
+  <div class="collapsible">
+    <ul>
+      <li>Document formulas for trading, P&L, passive income</li>
+      <li>Create visual mockups for each UI panel</li>
+      <li>Track upgrade costs, multipliers, progression curves</li>
+      <li>Ensure accessibility and responsive layout</li>
+    </ul>
+  </div>
+</div>
+
+</main>
+
+<script>
+function toggleSection(header) {
+  header.classList.toggle("active");
+}
+</script>
+
+</body>
+</html>
