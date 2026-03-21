@@ -1,4 +1,8 @@
-const API_BASE = window.BRODY_API_BASE || "http://localhost:8787/api";
+const API_BASE = window.BRODY_API_BASE || (
+  ["localhost", "127.0.0.1"].includes(window.location.hostname)
+    ? "http://localhost:8787/api"
+    : "/api"
+);
 
 const state = {
   token: localStorage.getItem("brody_token") || "",
